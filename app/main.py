@@ -16,6 +16,7 @@ from pydantic import BaseModel
 from app.ingest import ingest_pdf, ingest_pdf_openai, ingest_pdf_startup
 from app.qa import get_qa_chain
 from dotenv import load_dotenv
+from fastapi.middleware.cors import CORSMiddleware
 
 
 @asynccontextmanager
@@ -26,6 +27,13 @@ async def lifespan(app: FastAPI):
 
 
 app = FastAPI(lifespan=lifespan)
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # or "*" for all origins (not recommended in production)
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 load_dotenv()
 qa_chain = get_qa_chain()
 # Global variables to keep the vector store and chain in memory
